@@ -18,19 +18,16 @@ public enum BaseResponseStatus {
      * 400 : Request, Response 오류
      */
 
-    // [POST] /users
-    POST_USERS_EMPTY_EMAIL(false, HttpStatus.BAD_REQUEST.value(), "이메일을 입력해주세요."),
+    USERS_EMPTY_EMAIL(false, HttpStatus.BAD_REQUEST.value(), "이메일을 입력해주세요."),
+    TEST_EMPTY_MEMO(false, HttpStatus.BAD_REQUEST.value(), "메모를 입력해주세요."),
     POST_USERS_INVALID_EMAIL(false, HttpStatus.BAD_REQUEST.value(), "이메일 형식을 확인해주세요."),
     POST_USERS_EXISTS_EMAIL(false,HttpStatus.BAD_REQUEST.value(),"중복된 이메일입니다."),
+    POST_TEST_EXISTS_MEMO(false,HttpStatus.BAD_REQUEST.value(),"중복된 메모입니다."),
 
     RESPONSE_ERROR(false, HttpStatus.NOT_FOUND.value(), "값을 불러오는데 실패하였습니다."),
 
-    // [POST] /users
     DUPLICATED_EMAIL(false, HttpStatus.BAD_REQUEST.value(), "중복된 이메일입니다."),
     FAILED_TO_LOGIN(false,HttpStatus.NOT_FOUND.value(),"없는 아이디거나 비밀번호가 틀렸습니다."),
-
-    // [POST] /test/memos
-    POST_MEMO_EMPTY_MEMO(false, HttpStatus.BAD_REQUEST.value(), "메모를 입력해주세요."),
 
 
     /**
@@ -39,13 +36,10 @@ public enum BaseResponseStatus {
     DATABASE_ERROR(false, HttpStatus.INTERNAL_SERVER_ERROR.value(), "데이터베이스 연결에 실패하였습니다."),
     SERVER_ERROR(false, HttpStatus.INTERNAL_SERVER_ERROR.value(), "서버와의 연결에 실패하였습니다."),
 
-    //[PATCH] /users/{userIdx}
+
     MODIFY_FAIL_USERNAME(false,HttpStatus.INTERNAL_SERVER_ERROR.value(),"유저네임 수정 실패"),
     DELETE_FAIL_USERNAME(false,HttpStatus.INTERNAL_SERVER_ERROR.value(),"유저 삭제 실패"),
-
-    //[PATCH] /test/memos/{memoIdx}
-    MODIFY_FAIL_MEMO(false,HttpStatus.INTERNAL_SERVER_ERROR.value(),"메모 수정 실패"),
-    DELETE_FAIL_MEMO(false,HttpStatus.INTERNAL_SERVER_ERROR.value(),"메모 삭제 실패");
+    MODIFY_FAIL_MEMO(false,HttpStatus.INTERNAL_SERVER_ERROR.value(),"메모 수정 실패");
 
 
     private final boolean isSuccess;

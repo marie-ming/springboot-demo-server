@@ -2,23 +2,23 @@ package com.example.demo.src.test;
 
 import com.example.demo.common.BaseException;
 import com.example.demo.common.BaseResponse;
-import com.example.demo.src.test.model.*;
-import com.example.demo.src.user.UserService;
-import com.example.demo.src.user.model.*;
+import com.example.demo.src.test.model.GetMemoDto;
+import com.example.demo.src.test.model.MemoDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 import static com.example.demo.common.BaseResponseStatus.*;
-import static com.example.demo.utils.ValidationRegex.isRegexEmail;
+
 
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/test")
 public class TestController {
 
-    private final MemoService memoService;
+    private final TestService testService;
+
 
     /**
      * 로그 테스트 API
@@ -33,55 +33,61 @@ public class TestController {
     }
 
     /**
-     * 메모생성 API
-     * [POST] /test
-     * @return BaseResponse<PostMemoRes>
+     * 메모 생성 API
+     * [POST] /test/memos
+     * @return BaseResponse<String>
      */
     // Body
     @ResponseBody
     @PostMapping("/memos")
-    public BaseResponse<PostMemoRes> createMemo(@RequestBody PostMemoReq postMemoReq) {
-        if(postMemoReq.getMemo() == null){
-            return new BaseResponse<>(POST_MEMO_EMPTY_MEMO);
+    public BaseResponse<String> createMemo(@RequestBody MemoDto memoDto) {
+        if(memoDto.getMemo() == null){
+            return new BaseResponse<>(TEST_EMPTY_MEMO);
         }
         try{
-            PostMemoRes postMemoRes = memoService.createMemo(postMemoReq);
-            return new BaseResponse<>(postMemoRes);
+            testService.createMemo(memoDto);
+
+            String result = "생성 성공!!";
+            return new BaseResponse<>(result);
         } catch(BaseException exception){
             return new BaseResponse<>((exception.getStatus()));
         }
     }
 
+
     /**
-     * 메모 조회 API
-     * [GET] /test
-     * @return BaseResponse<List<GetMemoRes>>
+     * 메모 리스트 조회 API
+     * [GET] /test/memos
+     * @return BaseResponse<List<TestDto>>
      */
     //Query String
     @ResponseBody
-    @GetMapping("/memos") // (GET) 127.0.0.1:9000/test/memos
-    public BaseResponse<List<GetMemoRes>> getMemos() {
+    @GetMapping("/memos")
+    public BaseResponse<List<GetMemoDto>> getMemos() {
         try{
-            List<GetMemoRes> getMemosRes = memoService.getMemos();
-            return new BaseResponse<>(getMemosRes);
+        List<GetMemoDto> getMemoDtoList = testService.getMemos();
+        return new BaseResponse<>(getMemoDtoList);
         } catch(BaseException exception){
             return new BaseResponse<>((exception.getStatus()));
         }
     }
 
+
     /**
-     * 메모수정 API
-     * [PATCH] /test/memos/:memoId
+     * 메모 정보 변경 API
+     * [PATCH] test/memos/{memoId}
      * @return BaseResponse<String>
      */
     @ResponseBody
     @PatchMapping("/memos/{memoId}")
-    public BaseResponse<String> modifyMemoName(@PathVariable("memoId") int memoId, @RequestBody Memo memo){
+    public BaseResponse<String> modifyMemo(@PathVariable("memoId") int memoId, @RequestBody MemoDto memoDto){
         try {
-            PatchMemoReq patchMemoReq = new PatchMemoReq(memoId,memo.getMemo());
-            memoService.modifyMemoName(patchMemoReq);
+            if(memoDto.getMemo() == null || memoDto.getMemo().equals("")) {
+                throw new BaseException(TEST_EMPTY_MEMO);
+            }
+            testService.modifyMemo(memoId, memoDto);
 
-            String result = "";
+            String result = "수정 성공!!";
             return new BaseResponse<>(result);
         } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));

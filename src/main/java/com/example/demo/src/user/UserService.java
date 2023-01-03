@@ -19,7 +19,6 @@ public class UserService {
     private final UserDao userDao;
 
 
-
     //POST
     public PostUserRes createUser(PostUserReq postUserReq) throws BaseException {
         //중복
