@@ -21,4 +21,8 @@ public class Comment extends BaseEntity {
     private Long id;
 
     private String comment;
+
+    @ManyToOne
+    @JoinColumn(name="memoId")
+    private Memo memo;
 }

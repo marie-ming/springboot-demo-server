@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 @EqualsAndHashCode(callSuper = false)
@@ -21,4 +23,7 @@ public class Memo extends BaseEntity {
     private Long id;
 
     private String memo;
+
+    @OneToMany(mappedBy = "memo", fetch = FetchType.LAZY)
+    List<Comment> commentList = new ArrayList<>();
 }
