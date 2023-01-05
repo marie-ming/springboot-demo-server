@@ -4,6 +4,7 @@ import com.example.demo.common.BaseException;
 import com.example.demo.common.BaseResponse;
 import com.example.demo.src.test.model.GetMemoDto;
 import com.example.demo.src.test.model.MemoDto;
+import com.example.demo.src.test.model.PostCommentDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -80,7 +81,7 @@ public class TestController {
      */
     @ResponseBody
     @PatchMapping("/memos/{memoId}")
-    public BaseResponse<String> modifyMemo(@PathVariable("memoId") int memoId, @RequestBody MemoDto memoDto){
+    public BaseResponse<String> modifyMemo(@PathVariable("memoId") Long memoId, @RequestBody MemoDto memoDto){
         try {
             if(memoDto.getMemo() == null || memoDto.getMemo().equals("")) {
                 throw new BaseException(TEST_EMPTY_MEMO);
@@ -90,6 +91,27 @@ public class TestController {
             String result = "수정 성공!!";
             return new BaseResponse<>(result);
         } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+
+    /**
+     * 코멘트 생성 API
+     * [POST] /test/comments
+     * @return BaseResponse<String>
+     */
+    // Body
+    @ResponseBody
+    @PostMapping("/comments")
+    public BaseResponse<String> createComment(@RequestBody PostCommentDto postCommentDto) {
+        if(postCommentDto.getComment() == null){
+            return new BaseResponse<>(TEST_EMPTY_COMMENT);
+        }
+        try{
+            testService.createComment(postCommentDto);
+            String result = "생성 성공!!";
+            return new BaseResponse<>(result);
+        } catch(BaseException exception){
             return new BaseResponse<>((exception.getStatus()));
         }
     }

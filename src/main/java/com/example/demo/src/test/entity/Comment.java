@@ -1,6 +1,8 @@
 package com.example.demo.src.test.entity;
 
 import com.example.demo.common.BaseEntity;
+import com.example.demo.src.test.model.MemoDto;
+import com.example.demo.src.test.model.PostCommentDto;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -25,4 +27,9 @@ public class Comment extends BaseEntity {
     @ManyToOne
     @JoinColumn(name="memoId")
     private Memo memo;
+
+    public void makeComment(PostCommentDto postCommentDto, Memo memo){
+        this.memo = memo;
+        this.comment = postCommentDto.getComment();
+    }
 }

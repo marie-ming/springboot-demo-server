@@ -1,60 +1,56 @@
 package com.example.demo.src.test;
 
+import com.example.demo.src.test.entity.Comment;
+import com.example.demo.src.test.entity.Memo;
 import com.example.demo.src.test.model.GetMemoDto;
 import com.example.demo.src.test.model.MemoDto;
+import com.example.demo.src.test.model.PostCommentDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.EntityManager;
 import javax.sql.DataSource;
+import javax.swing.text.html.parser.Entity;
 import java.util.List;
 
+@RequiredArgsConstructor
 @Repository
 public class TestDao {
 
-    private JdbcTemplate jdbcTemplate;
+    private final EntityManager entityManager;
 
-    @Autowired
-    public void setDataSource(DataSource dataSource){
-        this.jdbcTemplate = new JdbcTemplate(dataSource);
+    public void createMemo(Memo memo){
+        if(memo.getId() == null){
+            entityManager.persist(memo);
+        }else {
+            entityManager.merge(memo);
+        }
     }
 
-    public MemoDto createMemo(MemoDto memoDto){
-        String createMemoQuery = "insert into MEMO (memo) VALUES (?)";
-        Object[] createMemoParams = new Object[]{memoDto.getMemo()};
-        this.jdbcTemplate.update(createMemoQuery, createMemoParams);
-
-        return memoDto;
-    }
-
-
-    public int checkMemo(String memo){
-        String checkMemoQuery = "select exists(select memo from MEMO where memo = ? and state = 'ACTIVE')";
-        String checkMemoParams = memo;
-        return this.jdbcTemplate.queryForObject(checkMemoQuery,
-                int.class,
-                checkMemoParams);
-
+    public List<Memo> checkMemo(String memo){
+     return entityManager.createQuery("select m from Memo m where m.memo = :memo and m.state = 'ACTIVE'", Memo.class)
+             .setParameter("memo", memo)
+             .getResultList();
     }
 
 
-    public List<GetMemoDto> getMemos() {
-        String getUsersQuery = "select * from MEMO where state = 'ACTIVE'";
-        return this.jdbcTemplate.query(getUsersQuery,
-                (rs,rowNum) -> new GetMemoDto(
-                        rs.getInt("id"),
-                        rs.getString("memo"))
-        );
+    public List<Memo> getMemos() {
+        return entityManager.createQuery("select m from Memo m where m.state = 'ACTIVE'",Memo.class)
+                .getResultList();
     }
 
 
-    public int modifyMemo(int memoId, MemoDto memoDto){
-        String modifyMemoQuery = "update MEMO set memo = ? where id = ? ";
-        Object[] modifyMemoParams = new Object[]{memoDto.getMemo(), memoId};
-
-        return this.jdbcTemplate.update(modifyMemoQuery,modifyMemoParams);
+    public Memo findMemo(Long id){
+       return entityManager.find(Memo.class, id);
     }
-
+    public void createComment(Comment comment){
+        if(comment.getId() == null){
+            entityManager.persist(comment);
+        }else {
+            entityManager.merge(comment);
+        }
+    }
 }

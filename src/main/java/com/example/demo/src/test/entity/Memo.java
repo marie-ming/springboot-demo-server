@@ -1,6 +1,8 @@
 package com.example.demo.src.test.entity;
 
 import com.example.demo.common.BaseEntity;
+import com.example.demo.src.test.model.MemoDto;
+import com.example.demo.src.test.model.PostCommentDto;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -26,4 +28,12 @@ public class Memo extends BaseEntity {
 
     @OneToMany(mappedBy = "memo", fetch = FetchType.LAZY)
     List<Comment> commentList = new ArrayList<>();
+
+    public void makeMemo(MemoDto memoDto){
+        this.memo = memoDto.getMemo();
+    }
+
+    public void updateMemo(MemoDto memoDto){
+        this.memo = memoDto.getMemo();
+    }
 }
