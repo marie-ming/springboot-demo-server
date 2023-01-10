@@ -7,6 +7,7 @@ import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -26,6 +27,7 @@ public class Memo extends BaseEntity {
 
     private String memo;
 
+    @BatchSize(size = 5)
     @OneToMany(mappedBy = "memo", fetch = FetchType.LAZY)
     List<Comment> commentList = new ArrayList<>();
 

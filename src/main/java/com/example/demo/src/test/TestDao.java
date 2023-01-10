@@ -38,6 +38,10 @@ public class TestDao {
 
 
     public List<Memo> getMemos() {
+
+//        return entityManager.createQuery("select m from Memo m left join fetch m.commentList where m.state = 'ACTIVE'")
+//                .getResultList();
+
         return entityManager.createQuery("select m from Memo m where m.state = 'ACTIVE'",Memo.class)
                 .getResultList();
     }
