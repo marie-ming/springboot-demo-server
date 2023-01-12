@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.example.demo.common.BaseEntity.State.ACTIVE;
 import static com.example.demo.common.BaseResponseStatus.*;
 
 @RequiredArgsConstructor
@@ -21,6 +22,8 @@ import static com.example.demo.common.BaseResponseStatus.*;
 public class TestService {
 
     private final TestDao testDao;
+    private final MemoRepository memoRepository;
+    private final CommentRepository commentRepository;
 
     public void createMemo(MemoDto memoDto) throws BaseException {
         Memo memo = new Memo();
@@ -30,7 +33,8 @@ public class TestService {
             throw new BaseException(POST_TEST_EXISTS_MEMO);
         }
         try{
-            testDao.createMemo(memo); // POINT
+            //testDao.createMemo(memo); // POINT
+            memoRepository.save(memo);
         } catch (Exception exception) {
             throw new BaseException(DATABASE_ERROR);
         }
@@ -39,7 +43,8 @@ public class TestService {
     @Transactional(readOnly = true)
     public int checkMemo(String memo) throws BaseException{
         try{
-            List<Memo> memoList = testDao.checkMemo(memo);
+            //List<Memo> memoList = testDao.checkMemo(memo);
+            List<Memo> memoList =  memoRepository.findByMemoAndState(memo, ACTIVE);
             return memoList.size();
         } catch (Exception exception){
             //exception.printStackTrace();
@@ -50,7 +55,8 @@ public class TestService {
     @Transactional(readOnly = true)
     public List<GetMemoDto> getMemos() throws BaseException{
         try{
-            List<Memo> memoList = testDao.getMemos();
+            //List<Memo> memoList = testDao.getMemos();
+            List<Memo> memoList = memoRepository.findAllByState(ACTIVE);
 
             List<GetMemoDto> getMemoDtoList = new ArrayList<>();
             for(Memo memo : memoList){
@@ -65,7 +71,9 @@ public class TestService {
 
     public void modifyMemo(Long memoId, MemoDto memoDto) throws BaseException{
         try{
-            Memo memo = testDao.findMemo(memoId);
+            //Memo memo = testDao.findMemo(memoId);
+            Memo memo = memoRepository.findByIdAndState(memoId, ACTIVE).get();
+
             if(memo == null){
                 throw new BaseException(MODIFY_FAIL_MEMO);
             }
@@ -78,12 +86,14 @@ public class TestService {
 
     public void createComment(PostCommentDto postCommentDto) throws BaseException {
         try{
-            Memo memo = testDao.findMemo(postCommentDto.getMemoId());
+            //Memo memo = testDao.findMemo(postCommentDto.getMemoId());
+            Memo memo = memoRepository.findByIdAndState(postCommentDto.getMemoId(), ACTIVE).get();
+
             Comment comment = new Comment();
             comment.makeComment(postCommentDto, memo);
 
-            testDao.createComment(comment);
-
+            //testDao.createComment(comment);
+            commentRepository.save(comment);
         } catch (Exception exception) {
             throw new BaseException(DATABASE_ERROR);
         }
